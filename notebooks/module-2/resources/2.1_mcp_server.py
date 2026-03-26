@@ -1,11 +1,11 @@
+from typing import Any, Dict
+
 from dotenv import load_dotenv
+from mcp.server.fastmcp import FastMCP
+from requests import get
+from tavily import TavilyClient
 
 load_dotenv()
-
-from mcp.server.fastmcp import FastMCP
-from tavily import TavilyClient
-from typing import Dict, Any
-from requests import get
 
 
 mcp = FastMCP("mcp_server")
@@ -55,6 +55,7 @@ def prompt():
 
     You may also ask clarifying questions to the user to better understand their question.
     """
+
 
 if __name__ == "__main__":
     mcp.run(transport="stdio")

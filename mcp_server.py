@@ -14,11 +14,16 @@ load_dotenv()
 async def main():
     client = MultiServerMCPClient(
         {
-            "local_server": {
+            # "local_server": {
+            #     "transport": "stdio",
+            #     "command": "python",
+            #     "args": ["notebooks/module-2/resources/2.1_mcp_server.py"],
+            # },
+            "time": {
                 "transport": "stdio",
-                "command": "python",
-                "args": ["notebooks/module-2/resources/2.1_mcp_server.py"],
-            }
+                "command": "uvx",
+                "args": ["mcp-server-time", "--local-timezone=America/New_York"],
+            },
         }
     )
 
@@ -26,34 +31,41 @@ async def main():
     tools = await client.get_tools()
 
     # get resources
-    resources = await client.get_resources("local_server")
+    # resources = await client.get_resources("local_server")
 
     # get prompts
-    prompt = await client.get_prompt("local_server", "prompt")
-    prompt = prompt[0].content
+    # prompt = await client.get_prompt("local_server", "prompt")
+    # prompt = prompt[0].content
 
     model = init_chat_model(
         model_provider="openai",
         base_url=os.environ.get("OPENAI_BASE_URL"),
         api_key=os.environ.get("OPENAI_API_KEY"),
-        model="gpt-5-nano",
+        model="Qwen3.5-397B-A17B-FP8",
         temperature=0.3,
     )
 
     agent = create_agent(
         model=model,
         tools=tools,
-        system_prompt=prompt,
+        # system_prompt=prompt,
     )
 
-    config = {"configurable": {"thread_id": "1"}}
+    # config = {"configurable": {"thread_id": "1"}}
 
-    question = HumanMessage(content="Tell me about the langchain-mcp-adapters library")
+    # question = HumanMessage(content="Tell me about the langchain-mcp-adapters library")
 
-    response = await agent.ainvoke({"messages": [question]}, config=config)
+    # response = await agent.ainvoke({"messages": [question]}, config=config)
 
+    # rprint(response)
+    # rprint(response["messages"][-1].content)
+
+    question = HumanMessage(
+        content="Use the get_current_time tool to find out what time it is."
+    )
+
+    response = await agent.ainvoke({"messages": [question]})
     rprint(response)
-    rprint(response["messages"][-1].content)
 
 
 if __name__ == "__main__":
